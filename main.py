@@ -26,7 +26,15 @@ users = mongo.db["pendingusers"]
 
 @app.get("/")
 async def read_root():
-    return {"message": "Hello World"}
+    subscriberList = subscribers.find({})
+    jobList = jobs.find({})
+    return JSONResponse(
+        content={
+            "subscribers": len(list(subscriberList)),
+            "jobs": len(list(jobList)),
+            "author":"Swoyam Siddharth Nayak"
+        }
+    )
 
 @app.post("/subscribe-newsletter")
 async def subscribe_newsletter(user: Subscriber):
