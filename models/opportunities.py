@@ -5,6 +5,6 @@ class Job(BaseModel):
     companyName: str
     role: str
     applicationLink : str
-    date : datetime
+    date : datetime = None
     contributor : str
     contributorEmail: str
