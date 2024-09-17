@@ -7,6 +7,8 @@ from dependencies import automate
 from models.subscribers import Subscriber
 from models.opportunities import Job
 from datetime import datetime
+from concurrent.futures import ThreadPoolExecutor
+import asyncio
 
 app = FastAPI()
 
@@ -23,6 +25,18 @@ app.add_middleware(
 subscribers = mongo.db["subscribers"]
 jobs = mongo.db["jobs"]
 users = mongo.db["pendingusers"]
+
+# Define the ThreadPoolExecutor globally
+executor = ThreadPoolExecutor(max_workers=1)
+
+# Mockup for `automate.sendBulkMails(job)`
+async def send_bulk_mails(job):
+    await automate.sendBulkMails(job)
+
+# Function to run the async task in a background thread
+def run_background_task(job):
+    loop = asyncio.get_event_loop()  # Get the current event loop
+    loop.run_in_executor(executor, asyncio.run, send_bulk_mails(job))
 
 @app.get("/")
 async def read_root():
@@ -83,7 +97,7 @@ async def verify_job(job: Job, otp: int):
             }
         )
 
-        await automate.sendBulkMails(job)
+        run_background_task(job)
 
         return JSONResponse(content={"message": "Job posted successfully"}, status_code=200)
     except Exception as e:
