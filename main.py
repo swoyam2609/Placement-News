@@ -103,6 +103,7 @@ async def get_jobs():
                 "contributorName": job["contributorName"],
                 "datePosted": job["datePosted"]
             })
+        jobsList.reverse()
         return JSONResponse(content=jobsList, status_code=200)
     except Exception as e:
         return JSONResponse(content={"message":f"failed to get jobs: {e}"}, status_code=404)
