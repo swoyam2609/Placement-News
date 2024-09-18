@@ -9,6 +9,7 @@ from models.opportunities import Job
 from datetime import datetime
 from concurrent.futures import ThreadPoolExecutor
 import asyncio
+import uvicorn
 
 app = FastAPI()
 
@@ -121,3 +122,6 @@ async def get_jobs():
         return JSONResponse(content=jobsList, status_code=200)
     except Exception as e:
         return JSONResponse(content={"message":f"failed to get jobs: {e}"}, status_code=404)
+
+if __name__ == "__main__":
+    uvicorn.run(app, host="0.0.0.0", port=8007)
